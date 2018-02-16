@@ -44,16 +44,14 @@ class SlownessFinder:
         build_cmd[infile_index] = src_fname
         build_cmd[object_index] = obj_fname
         for d in deps:
+            if d in results:
+                continue
             open(src_fname, 'w').write(cppfile_templ % d)
             start = time.time()
             if subprocess.run(build_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
                 end = time.time()
                 dur = end - start
-                if d in results:
-                    if dur < results[d]:
-                        results[d] = dur
-                else:
-                    results[d] = dur
+                results[d] = dur
         return results
 
     def get_deps(self, cmdarr, object_index):
@@ -72,7 +70,10 @@ class SlownessFinder:
     def get_command(self, fname):
         for i in self.compile_cmds:
             if i['file'] == fname:
-                return shlex.split(i['command'])
+                res = shlex.split(i['command'])
+                if res[0] == 'ccache':
+                    return res[1:]
+                return res
         sys.exit('File %s not found in compilation db.' % fname)
 
 def sort_and_print(times):
@@ -81,7 +82,7 @@ def sort_and_print(times):
         tarr.append([dur, fname])
     tarr.sort()
     for i in tarr[::-1]:
-        print(i)
+        print(*i)
 
 if __name__ == '__main__':
     if not os.path.exists('compile_commands.json'):
