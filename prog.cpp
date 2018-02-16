@@ -15,7 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<iostream>
+#include<h1.h>
+#include<h2.h>
 
 int main(int, char**) {
   std::cout << "I am a demo program. What I do is insignificant.\n";
