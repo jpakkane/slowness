@@ -12,4 +12,4 @@ ninja
 ```
 
 The code has been tested with Meson but it should work with any build
-system that produces a `compilation_commands.json` database.
+system that produces a `compile_commands.json` database.
